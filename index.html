@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>System Design Study</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#2F6F5E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen" class="auth-screen hidden">
+    <div class="auth-card">
+      <h1>System Design Study</h1>
+      <p class="auth-sub">Sign in to sync your progress across devices.</p>
+      <form id="auth-form">
+        <input type="email" id="auth-email" placeholder="Email" required autocomplete="email" />
+        <button type="submit" id="auth-submit">Send magic link</button>
+      </form>
+      <p id="auth-message" class="auth-message"></p>
+    </div>
+  </div>
+
+  <!-- APP SHELL -->
+  <div id="app" class="app hidden">
+
+    <nav class="nav">
+      <div class="nav-brand">SD Study</div>
+      <button class="nav-item" data-view="topics" aria-label="Topics">
+        <span class="nav-icon">◐</span><span class="nav-label">Topics</span>
+      </button>
+      <button class="nav-item" data-view="problems" aria-label="Problems">
+        <span class="nav-icon">▣</span><span class="nav-label">Problems</span>
+      </button>
+      <button class="nav-item" data-view="flashcards" aria-label="Flashcards">
+        <span class="nav-icon">▢</span><span class="nav-label">Flashcards</span>
+      </button>
+      <button class="nav-item" data-view="mistakes" aria-label="Mistakes Log">
+        <span class="nav-icon">⚑</span><span class="nav-label">Mistakes</span>
+      </button>
+      <button class="nav-item nav-item-settings" data-view="settings" aria-label="Settings">
+        <span class="nav-icon">⚙</span><span class="nav-label">Settings</span>
+      </button>
+    </nav>
+
+    <main class="main">
+      <header class="topbar">
+        <h2 id="view-title">Topics</h2>
+        <span class="difficulty-badge" id="difficulty-badge">easy</span>
+      </header>
+
+      <section id="view-topics" class="view"></section>
+      <section id="view-problems" class="view hidden"></section>
+      <section id="view-flashcards" class="view hidden"></section>
+      <section id="view-mistakes" class="view hidden"></section>
+      <section id="view-settings" class="view hidden"></section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
