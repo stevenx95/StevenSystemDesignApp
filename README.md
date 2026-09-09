@@ -10,7 +10,6 @@ No build step. Plain HTML/CSS/JS, deployable straight to GitHub Pages.
 
 1. Go to https://supabase.com and sign up (free tier is enough).
 2. Create a new project. Pick any name/region/password (save the DB password somewhere safe).
-   password: aBtH8k1V7ZBAF9Tv
 3. Wait for it to finish provisioning (~2 minutes).
 
 ## 2. Set up the database
