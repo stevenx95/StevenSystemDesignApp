@@ -10,7 +10,10 @@ const DB = {
     supabaseClient.auth.onAuthStateChange((_event, session) => cb(session));
   },
   async signInWithMagicLink(email) {
-    return supabaseClient.auth.signInWithOtp({ email });
+    return supabaseClient.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.href },
+    });
   },
   async signOut() {
     return supabaseClient.auth.signOut();
@@ -34,6 +37,11 @@ const DB = {
   },
   async getEstimationDrills() {
     const { data, error } = await supabaseClient.from("estimation_drills").select("*");
+    if (error) throw error;
+    return data;
+  },
+  async getEstimationAttempts(userId) {
+    const { data, error } = await supabaseClient.from("estimation_attempts").select("*").eq("user_id", userId);
     if (error) throw error;
     return data;
   },
