@@ -30,7 +30,15 @@ function renderTopics(topics) {
           <h3>${escapeHtml(t.name)}</h3>
         </div>
         <div class="card-body hidden" id="topic-${t.id}">
-          <p>${escapeHtml(t.summary)}</p>
+          ${t.summary
+            .split(/\n\s*\n/)
+            .map((para) => `<p>${escapeHtml(para.trim())}</p>`)
+            .join("")}
+          ${
+            t.key_points?.length
+              ? `<div class="section-label">Quick-scan checklist</div><ul class="key-points">${t.key_points.map((k) => `<li>${escapeHtml(k)}</li>`).join("")}</ul>`
+              : ""
+          }
           ${t.source_links?.length ? `<div class="section-label">Free sources to read further</div>${renderLinkList(t.source_links, false)}` : ""}
           ${t.blog_links?.length ? `<div class="section-label">Related engineering blog posts</div>${renderLinkList(t.blog_links, true)}` : ""}
         </div>
@@ -41,6 +49,37 @@ function renderTopics(topics) {
 }
 
 // ---------- PROBLEMS ----------
+function renderProblemsToggle(activeSubView) {
+  return `
+    <div class="segmented">
+      <button class="segmented-btn ${activeSubView === "problems" ? "active" : ""}" data-subview="problems">Problems</button>
+      <button class="segmented-btn ${activeSubView === "drills" ? "active" : ""}" data-subview="drills">Estimation drills</button>
+    </div>
+  `;
+}
+
+function formatTime(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
+  const s = Math.floor(totalSeconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+function renderTimerWidget(problemId, timerState, defaultSeconds, lastUsedSeconds) {
+  const remaining = timerState ? timerState.remaining : defaultSeconds;
+  const running = timerState?.running;
+  return `
+    <div class="timer-widget" data-timer-widget="${problemId}">
+      <span class="timer-display">${formatTime(remaining)}</span>
+      ${
+        running
+          ? `<button class="btn btn-secondary" data-timer-stop="${problemId}">Stop</button>`
+          : `<button class="btn btn-secondary" data-timer-start="${problemId}">${timerState ? "Resume" : "Start timer"}</button>`
+      }
+      <button class="btn btn-secondary" data-timer-reset="${problemId}">Reset</button>
+      ${lastUsedSeconds ? `<span class="timer-last">last attempt: ${formatTime(lastUsedSeconds)}</span>` : ""}
+    </div>
+  `;
+}
 function statusFor(attempt) {
   if (!attempt) return { cls: "", label: "not attempted" };
   if (attempt.struggled) return { cls: "struggled", label: "struggled" };
@@ -48,7 +87,7 @@ function statusFor(attempt) {
   return { cls: "attempted", label: "in progress" };
 }
 
-function renderProblems(problems, attemptsById) {
+function renderProblems(problems, attemptsById, timers, timerDefaultSeconds) {
   if (problems.length === 0) return `<div class="empty-state">No problems at this difficulty yet.</div>`;
   return problems
     .map((p) => {
@@ -64,6 +103,9 @@ function renderProblems(problems, attemptsById) {
           </div>
         </div>
         <div class="card-body hidden" id="problem-${p.id}">
+          <div class="section-label">Timer (optional — builds the habit of a rough design in ~20-30 min)</div>
+          ${renderTimerWidget(p.id, timers[p.id], timerDefaultSeconds, attempt?.timer_used_seconds)}
+
           <div class="section-label">My attempt (write this before revealing hints)</div>
           <textarea class="attempt-box" data-attempt="${p.id}" placeholder="Sketch your approach here...">${escapeHtml(attempt?.my_attempt_text || "")}</textarea>
           <div style="margin-top:8px;"><button class="btn btn-secondary" data-save-attempt="${p.id}">Save attempt</button></div>
@@ -98,6 +140,35 @@ function renderProblems(problems, attemptsById) {
             <input type="checkbox" data-struggled="${p.id}" ${attempt?.struggled ? "checked" : ""} />
             Mark as struggled (resurfaces in Mistakes Log)
           </label>
+        </div>
+      </div>`;
+    })
+    .join("");
+}
+
+// ---------- ESTIMATION DRILLS ----------
+function renderEstimationDrills(drills, attemptsByDrill) {
+  if (drills.length === 0) return `<div class="empty-state">No estimation drills at this difficulty yet.</div>`;
+  return drills
+    .map((d) => {
+      const attempt = attemptsByDrill[d.id];
+      return `
+      <div class="card">
+        <div class="card-title-row" data-toggle="drill-${d.id}">
+          <h3>${escapeHtml(d.scenario.slice(0, 60))}${d.scenario.length > 60 ? "…" : ""}</h3>
+        </div>
+        <div class="card-body hidden" id="drill-${d.id}">
+          <p>${escapeHtml(d.scenario)}</p>
+          <div class="section-label">Commit to your own estimate first</div>
+          <textarea class="attempt-box" data-drill-estimate="${d.id}" placeholder="Write your estimate and how you got there...">${escapeHtml(attempt?.my_estimate || "")}</textarea>
+          <div style="margin-top:8px;"><button class="btn btn-secondary" data-save-drill="${d.id}">Save my estimate</button></div>
+
+          <details class="accordion" ${attempt ? "" : ""}>
+            <summary>Reveal answer + reasoning</summary>
+            <div class="accordion-content">
+              ${attempt ? `<p>${escapeHtml(d.answer_guidance)}</p>` : `<p class="empty-state">Save your own estimate above first, then reopen this to compare.</p>`}
+            </div>
+          </details>
         </div>
       </div>`;
     })
