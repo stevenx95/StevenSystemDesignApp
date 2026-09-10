@@ -167,6 +167,10 @@ input {
 .card-body { margin-top: 12px; font-size: 0.92rem; color: var(--text-secondary); line-height: 1.5; }
 .card-body a { color: var(--accent); }
 .link-list { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-direction: column; gap: 4px; }
+.key-points { margin: 10px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.key-points li { line-height: 1.45; }
+.card-body p { line-height: 1.6; margin: 0 0 12px; }
+.card-body p:last-of-type { margin-bottom: 4px; }
 
 /* ===== Problems ===== */
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
@@ -204,6 +208,41 @@ textarea.attempt-box {
   font-weight: 500;
 }
 .btn-secondary { background: var(--accent-soft); color: var(--accent); }
+
+/* Segmented toggle (Problems / Estimation drills) */
+.segmented {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 3px;
+  margin-bottom: 16px;
+  gap: 3px;
+}
+.segmented-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.segmented-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+
+/* Timer widget */
+.timer-widget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.timer-display {
+  font-family: var(--font-head);
+  font-size: 1.3rem;
+  min-width: 60px;
+}
+.timer-last { font-size: 0.78rem; color: var(--text-secondary); }
 
 /* ===== Flashcards ===== */
 .flashcard {
